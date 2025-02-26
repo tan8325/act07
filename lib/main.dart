@@ -25,7 +25,8 @@ class MyApp extends StatelessWidget {
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
           return MaterialApp(
-            theme: themeProvider.isDarkMode ? ThemeData.dark() : ThemeData.light(),
+            theme:
+                themeProvider.isDarkMode ? ThemeData.dark() : ThemeData.light(),
             home: const FadingTextScreen(),
           );
         },
@@ -81,7 +82,9 @@ class _FadingTextScreenState extends State<FadingTextScreen> {
         title: const Text("Fading Text Animation"),
         actions: [
           IconButton(
-            icon: Icon(themeProvider.isDarkMode ? Icons.nightlight_round : Icons.wb_sunny),
+            icon: Icon(themeProvider.isDarkMode
+                ? Icons.nightlight_round
+                : Icons.wb_sunny),
             onPressed: themeProvider.toggleTheme,
           ),
           IconButton(
@@ -96,7 +99,7 @@ class _FadingTextScreenState extends State<FadingTextScreen> {
           FadingTextAnimation(
             duration: const Duration(seconds: 1),
             textColor: _textColor,
-            text: 'Hello, Flutter!',
+            text: 'Hello, Flutter! (tap to fade)',
             showFrame: _showFrame,
             onToggleFrame: () {
               setState(() {
@@ -143,10 +146,17 @@ class FadingTextAnimation extends StatefulWidget {
 
 class _FadingTextAnimationState extends State<FadingTextAnimation> {
   bool _isVisible = true;
+  bool _isRotated = false;
 
   void _toggleVisibility() {
     setState(() {
       _isVisible = !_isVisible;
+    });
+  }
+
+  void _toggleRotation() {
+    setState(() {
+      _isRotated = !_isRotated;
     });
   }
 
@@ -175,20 +185,24 @@ class _FadingTextAnimationState extends State<FadingTextAnimation> {
               opacity: _isVisible ? 1.0 : 0.0,
               duration: widget.duration,
               curve: Curves.easeInOut,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Container(
-                  decoration: widget.showFrame
-                      ? BoxDecoration(
-                          border: Border.all(color: Colors.blue, width: 4),
-                          borderRadius: BorderRadius.circular(20),
-                        )
-                      : null,
-                  child: Image.asset(
-                    'assets/images/Eggdog.png',
-                    width: 200,
-                    height: 200,
-                    fit: BoxFit.cover,
+              child: AnimatedRotation(
+                turns: _isRotated ? 1 : 0,
+                duration: const Duration(milliseconds: 500),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Container(
+                    decoration: widget.showFrame
+                        ? BoxDecoration(
+                            border: Border.all(color: Colors.blue, width: 4),
+                            borderRadius: BorderRadius.circular(20),
+                          )
+                        : null,
+                    child: Image.asset(
+                      'assets/images/Eggdog.png',
+                      width: 200,
+                      height: 200,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
@@ -202,6 +216,12 @@ class _FadingTextAnimationState extends State<FadingTextAnimation> {
               widget.onToggleFrame();
             },
           ),
+          SwitchListTile(
+              title: const Text("Rotate the Image"),
+              value: _isRotated,
+              onChanged: (value) {
+                _toggleRotation();
+              })
         ],
       ),
     );
