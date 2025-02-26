@@ -44,6 +44,7 @@ class FadingTextScreen extends StatefulWidget {
 class _FadingTextScreenState extends State<FadingTextScreen> {
   Color _textColor = Colors.black;
   final PageController _pageController = PageController();
+  bool _showFrame = false;
 
   void _changeTextColor() {
     showDialog(
@@ -96,11 +97,23 @@ class _FadingTextScreenState extends State<FadingTextScreen> {
             duration: const Duration(seconds: 1),
             textColor: _textColor,
             text: 'Hello, Flutter!',
+            showFrame: _showFrame,
+            onToggleFrame: () {
+              setState(() {
+                _showFrame = !_showFrame;
+              });
+            },
           ),
           FadingTextAnimation(
             duration: const Duration(seconds: 3),
             textColor: _textColor,
             text: 'Welcome to Page 2!',
+            showFrame: _showFrame,
+            onToggleFrame: () {
+              setState(() {
+                _showFrame = !_showFrame;
+              });
+            },
           ),
         ],
       ),
@@ -112,12 +125,16 @@ class FadingTextAnimation extends StatefulWidget {
   final Duration duration;
   final Color textColor;
   final String text;
+  final bool showFrame;
+  final VoidCallback onToggleFrame;
 
   const FadingTextAnimation({
     super.key,
     required this.duration,
     required this.textColor,
     required this.text,
+    required this.showFrame,
+    required this.onToggleFrame,
   });
 
   @override
@@ -136,17 +153,48 @@ class _FadingTextAnimationState extends State<FadingTextAnimation> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: GestureDetector(
-        onTap: _toggleVisibility,
-        child: AnimatedOpacity(
-          opacity: _isVisible ? 1.0 : 0.0,
-          duration: widget.duration,
-          curve: Curves.easeInOut,
-          child: Text(
-            widget.text,
-            style: TextStyle(fontSize: 24, color: widget.textColor),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          GestureDetector(
+            onTap: _toggleVisibility,
+            child: AnimatedOpacity(
+              opacity: _isVisible ? 1.0 : 0.0,
+              duration: widget.duration,
+              curve: Curves.easeInOut,
+              child: Text(
+                widget.text,
+                style: TextStyle(fontSize: 24, color: widget.textColor),
+              ),
+            ),
           ),
-        ),
+          const SizedBox(height: 20),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              decoration: widget.showFrame
+                  ? BoxDecoration(
+                      border: Border.all(color: Colors.blue, width: 4),
+                      borderRadius: BorderRadius.circular(20),
+                    )
+                  : null,
+              child: Image.asset(
+                'assets/images/Eggdog.png',
+                width: 200,
+                height: 200,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          SwitchListTile(
+            title: const Text("Toggle Frame"),
+            value: widget.showFrame,
+            onChanged: (value) {
+              widget.onToggleFrame();
+            },
+          ),
+        ],
       ),
     );
   }
