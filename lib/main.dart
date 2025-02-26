@@ -3,11 +3,12 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class ThemeProvider with ChangeNotifier {
   bool isDarkMode = false;
+  
   void toggleTheme() {
     isDarkMode = !isDarkMode;
     notifyListeners();
@@ -15,6 +16,8 @@ class ThemeProvider with ChangeNotifier {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -23,7 +26,7 @@ class MyApp extends StatelessWidget {
         builder: (context, themeProvider, child) {
           return MaterialApp(
             theme: themeProvider.isDarkMode ? ThemeData.dark() : ThemeData.light(),
-            home: FadingTextScreen(),
+            home: const FadingTextScreen(),
           );
         },
       ),
@@ -32,6 +35,8 @@ class MyApp extends StatelessWidget {
 }
 
 class FadingTextScreen extends StatefulWidget {
+  const FadingTextScreen({super.key});
+
   @override
   _FadingTextScreenState createState() => _FadingTextScreenState();
 }
@@ -45,7 +50,7 @@ class _FadingTextScreenState extends State<FadingTextScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Pick a color"),
+          title: const Text("Pick a color"),
           content: SingleChildScrollView(
             child: ColorPicker(
               pickerColor: _textColor,
@@ -58,7 +63,7 @@ class _FadingTextScreenState extends State<FadingTextScreen> {
           ),
           actions: [
             TextButton(
-              child: Text("Done"),
+              child: const Text("Done"),
               onPressed: () => Navigator.pop(context),
             ),
           ],
@@ -72,14 +77,14 @@ class _FadingTextScreenState extends State<FadingTextScreen> {
     final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text("Fading Text Animation"),
+        title: const Text("Fading Text Animation"),
         actions: [
           IconButton(
             icon: Icon(themeProvider.isDarkMode ? Icons.nightlight_round : Icons.wb_sunny),
             onPressed: themeProvider.toggleTheme,
           ),
           IconButton(
-            icon: Icon(Icons.color_lens),
+            icon: const Icon(Icons.color_lens),
             onPressed: _changeTextColor,
           ),
         ],
@@ -87,8 +92,8 @@ class _FadingTextScreenState extends State<FadingTextScreen> {
       body: PageView(
         controller: _pageController,
         children: [
-          FadingTextAnimation(duration: Duration(seconds: 1), textColor: _textColor),
-          FadingTextAnimation(duration: Duration(seconds: 3), textColor: _textColor),
+          FadingTextAnimation(duration: const Duration(seconds: 1), textColor: _textColor),
+          FadingTextAnimation(duration: const Duration(seconds: 3), textColor: _textColor),
         ],
       ),
     );
@@ -98,8 +103,8 @@ class _FadingTextScreenState extends State<FadingTextScreen> {
 class FadingTextAnimation extends StatefulWidget {
   final Duration duration;
   final Color textColor;
-  
-  FadingTextAnimation({required this.duration, required this.textColor});
+
+  const FadingTextAnimation({super.key, required this.duration, required this.textColor});
 
   @override
   _FadingTextAnimationState createState() => _FadingTextAnimationState();
@@ -107,6 +112,7 @@ class FadingTextAnimation extends StatefulWidget {
 
 class _FadingTextAnimationState extends State<FadingTextAnimation> {
   bool _isVisible = true;
+
   void _toggleVisibility() {
     setState(() {
       _isVisible = !_isVisible;
@@ -116,23 +122,17 @@ class _FadingTextAnimationState extends State<FadingTextAnimation> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          AnimatedOpacity(
-            opacity: _isVisible ? 1.0 : 0.0,
-            duration: widget.duration,
-            child: Text(
-              'Hello, Flutter!',
-              style: TextStyle(fontSize: 24, color: widget.textColor),
-            ),
+      child: GestureDetector(
+        onTap: _toggleVisibility,
+        child: AnimatedOpacity(
+          opacity: _isVisible ? 1.0 : 0.0,
+          duration: widget.duration,
+          curve: Curves.easeInOut,
+          child: Text(
+            'Hello, Flutter!',
+            style: TextStyle(fontSize: 24, color: widget.textColor),
           ),
-          SizedBox(height: 20),
-          FloatingActionButton(
-            onPressed: _toggleVisibility,
-            child: Icon(Icons.play_arrow),
-          ),
-        ],
+        ),
       ),
     );
   }
