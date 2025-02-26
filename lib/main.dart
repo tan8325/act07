@@ -169,20 +169,28 @@ class _FadingTextAnimationState extends State<FadingTextAnimation> {
             ),
           ),
           const SizedBox(height: 20),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: Container(
-              decoration: widget.showFrame
-                  ? BoxDecoration(
-                      border: Border.all(color: Colors.blue, width: 4),
-                      borderRadius: BorderRadius.circular(20),
-                    )
-                  : null,
-              child: Image.asset(
-                'assets/images/Eggdog.png',
-                width: 200,
-                height: 200,
-                fit: BoxFit.cover,
+          GestureDetector(
+            onTap: _toggleVisibility,
+            child: AnimatedOpacity(
+              opacity: _isVisible ? 1.0 : 0.0,
+              duration: widget.duration,
+              curve: Curves.easeInOut,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Container(
+                  decoration: widget.showFrame
+                      ? BoxDecoration(
+                          border: Border.all(color: Colors.blue, width: 4),
+                          borderRadius: BorderRadius.circular(20),
+                        )
+                      : null,
+                  child: Image.asset(
+                    'assets/images/Eggdog.png',
+                    width: 200,
+                    height: 200,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
             ),
           ),
