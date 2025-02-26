@@ -8,7 +8,7 @@ void main() {
 
 class ThemeProvider with ChangeNotifier {
   bool isDarkMode = false;
-  
+
   void toggleTheme() {
     isDarkMode = !isDarkMode;
     notifyListeners();
@@ -92,8 +92,16 @@ class _FadingTextScreenState extends State<FadingTextScreen> {
       body: PageView(
         controller: _pageController,
         children: [
-          FadingTextAnimation(duration: const Duration(seconds: 1), textColor: _textColor),
-          FadingTextAnimation(duration: const Duration(seconds: 3), textColor: _textColor),
+          FadingTextAnimation(
+            duration: const Duration(seconds: 1),
+            textColor: _textColor,
+            text: 'Hello, Flutter!',
+          ),
+          FadingTextAnimation(
+            duration: const Duration(seconds: 3),
+            textColor: _textColor,
+            text: 'Welcome to Page 2!',
+          ),
         ],
       ),
     );
@@ -103,8 +111,14 @@ class _FadingTextScreenState extends State<FadingTextScreen> {
 class FadingTextAnimation extends StatefulWidget {
   final Duration duration;
   final Color textColor;
+  final String text;
 
-  const FadingTextAnimation({super.key, required this.duration, required this.textColor});
+  const FadingTextAnimation({
+    super.key,
+    required this.duration,
+    required this.textColor,
+    required this.text,
+  });
 
   @override
   _FadingTextAnimationState createState() => _FadingTextAnimationState();
@@ -129,7 +143,7 @@ class _FadingTextAnimationState extends State<FadingTextAnimation> {
           duration: widget.duration,
           curve: Curves.easeInOut,
           child: Text(
-            'Hello, Flutter!',
+            widget.text,
             style: TextStyle(fontSize: 24, color: widget.textColor),
           ),
         ),
